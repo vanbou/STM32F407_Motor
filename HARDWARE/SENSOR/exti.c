@@ -7,55 +7,146 @@
 #include "usart.h"
 
 
-//Íâ²¿ÖĞ¶Ï0·şÎñ³ÌĞò ÓÒ±ß´«¸ĞÆ÷ÖĞ¶Ï
+
+
+
+//ä¼ æ„Ÿå™¨çŠ¶æ€ç›‘æµ‹,é€†æ—¶é’ˆ
+u8 Check_Sensor0_State(void)
+{
+	 
+    //Sensor1è§¦å‘æƒ…å†µ
+    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == SET) 
+    {
+			printf("\n----------Sensor 1 No Trigger---------\n");
+      return NORMAL;
+    }
+    //è§¦å‘
+    else
+    {
+			printf("\n----------Sensor 1 has Trigger---------\n");
+      return TAGGLE;    
+    }  
+		//delay_ms(10);
+}
+
+
+	//é¡ºæ—¶é’ˆ
+u8 Check_Sensor1_State(void)
+{
+		//Sensor2è§¦å‘æƒ…å†µ
+    if(GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_1) == SET) 
+    {
+			printf("\n----------Sensor 2 No Trigger---------\n");
+      return NORMAL;
+    }
+    //è§¦å‘
+    else
+    {
+			printf("\n----------Sensor 2 has Trigger---------\n");
+      return TAGGLE;    
+    }  
+		//delay_ms(10);
+	}
+
+	
+	//ä¸‹æ–¹
+	u8 Check_Sensor2_State(void)
+{
+		
+				//Sensor3è§¦å‘æƒ…å†µ
+    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2) == SET) 
+    {
+			printf("\n----------Sensor 3 No Trigger---------\n");
+      return NORMAL;
+    }
+    //è§¦å‘
+    else
+    {
+			printf("\n----------Sensor 3 has Trigger---------\n");
+      return TAGGLE;    
+    } 
+		//delay_ms(10);
+		
+	}
+
+	
+//ä¸Šæ–¹
+	u8 Check_Sensor3_State(void)
+{
+		
+				//Sensor4è§¦å‘æƒ…å†µ
+    if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3) == SET) 
+    {
+			printf("\n----------4No---------\n");
+      return NORMAL;
+    }
+    //è§¦å‘
+    else
+    {
+			printf("\n----------Sensor 4 has Trigger---------\n");
+      return TAGGLE;    
+    } 
+		
+		//delay_ms(10);
+ }
+
+
+
+
+
+
+
+
+
+
+
+//å¤–éƒ¨ä¸­æ–­0æœåŠ¡ç¨‹åº å³è¾¹ä¼ æ„Ÿå™¨ä¸­æ–­
 void EXTI0_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line0) == 1)
   {
 		printf("--------exit0-------------");
-		Locate_RleLR(200,200,CW);
 		
     EXTI_ClearITPendingBit(EXTI_Line0);
-  }//Çå³ıLINE0ÉÏµÄÖĞ¶Ï±êÖ¾Î» 
+  }//æ¸…é™¤LINE0ä¸Šçš„ä¸­æ–­æ ‡å¿—ä½ 
 }
 
 
-//Íâ²¿ÖĞ¶Ï1·şÎñ³ÌĞò ×ó±ß´«¸ĞÆ÷ÖĞ¶Ï
+//å¤–éƒ¨ä¸­æ–­1æœåŠ¡ç¨‹åº å·¦è¾¹ä¼ æ„Ÿå™¨ä¸­æ–­
 void EXTI1_IRQHandler(void)
 {
 	 if(EXTI_GetITStatus(EXTI_Line1) == 1)
 	  {
 		printf("--------exit1-------------");
-			Locate_RleLR(200,200,CW);
 		
     EXTI_ClearITPendingBit(EXTI_Line1);
-  }//Çå³ıLINE1ÉÏµÄÖĞ¶Ï±êÖ¾Î» 
+  }//æ¸…é™¤LINE1ä¸Šçš„ä¸­æ–­æ ‡å¿—ä½ 
 }
 
 
-//Íâ²¿ÖĞ¶Ï2·şÎñ³ÌĞò ÏÂ·½´«¸ĞÆ÷ÖĞ¶Ï
+//å¤–éƒ¨ä¸­æ–­2æœåŠ¡ç¨‹åº ä¸‹æ–¹ä¼ æ„Ÿå™¨ä¸­æ–­
 void EXTI2_IRQHandler(void)
 {
 
 	 if(EXTI_GetITStatus(EXTI_Line2) == 1)
 	  {
 			printf("--------exit2-------------");
-		Locate_RleUD(10000,10000,CW);
 		
     EXTI_ClearITPendingBit(EXTI_Line2);
-  } //Çå³ıLINE2ÉÏµÄÖĞ¶Ï±êÖ¾Î»  
+  } //æ¸…é™¤LINE2ä¸Šçš„ä¸­æ–­æ ‡å¿—ä½  
 }
-//Íâ²¿ÖĞ¶Ï3·şÎñ³ÌĞò ÉÏ·½´«¸ĞÆ÷ÖĞ¶Ï
+
+
+//å¤–éƒ¨ä¸­æ–­3æœåŠ¡ç¨‹åº ä¸Šæ–¹ä¼ æ„Ÿå™¨ä¸­æ–­
 void EXTI3_IRQHandler(void)
 {
 
  if(EXTI_GetITStatus(EXTI_Line3) == 1)
 	 {
 		 printf("--------exit3-------------");
-		Locate_RleUD(10000,10000,CW);
 		
     EXTI_ClearITPendingBit(EXTI_Line3);
-  }//Çå³ıLINE3ÉÏµÄÖĞ¶Ï±êÖ¾Î»  
+  }//æ¸…é™¤LINE3ä¸Šçš„ä¸­æ–­æ ‡å¿—ä½  
 }
 
 
@@ -63,86 +154,86 @@ void EXTI3_IRQHandler(void)
 void EXTIX_Init(void)
 {
 	
-	//PB0Ê¹ÓÃExit0ºÅÖĞ¶ÏÏß£¬PG1Ê¹ÓÃExit1£¬PC2Ê¹ÓÃExit2£¬PA3Ê¹ÓÃExit3
+	//PB0ä½¿ç”¨Exit0å·ä¸­æ–­çº¿ï¼ŒPG1ä½¿ç”¨Exit1ï¼ŒPC2ä½¿ç”¨Exit2ï¼ŒPA3ä½¿ç”¨Exit3
 	NVIC_InitTypeDef   NVIC_InitStructure;
 	EXTI_InitTypeDef   EXTI_InitStructure;
 	GPIO_InitTypeDef   GPIO_InitStructure;
 	
 
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOG|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOA, ENABLE);//Ê¹ÄÜGPIOB,GPIOG,GPIOC,GPIOAÊ±ÖÓ
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOG|RCC_AHB1Periph_GPIOC|RCC_AHB1Periph_GPIOA, ENABLE);//ä½¿èƒ½GPIOB,GPIOG,GPIOC,GPIOAæ—¶é’Ÿ
  
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);//Ê¹ÄÜSYSCFGÊ±ÖÓ£¨ÖĞ¶ÏĞèÒªÊ¹ÓÃAFIOÊ±ÖÓ)
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);//ä½¿èƒ½SYSCFGæ—¶é’Ÿï¼ˆä¸­æ–­éœ€è¦ä½¿ç”¨AFIOæ—¶é’Ÿ)
 	
 	
 	
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PB0¶ÔÓ¦IOÅäÖÃ
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//ÆÕÍ¨ÊäÈëÄ£Ê½
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PB0å¯¹åº”IOé…ç½®
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//æ™®é€šè¾“å…¥æ¨¡å¼
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
-  GPIO_Init(GPIOB, &GPIO_InitStructure);//³õÊ¼»¯GPIOB0
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ä¸Šæ‹‰
+  GPIO_Init(GPIOB, &GPIO_InitStructure);//åˆå§‹åŒ–GPIOB0
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; //PG1¶ÔÓ¦IOÅäÖÃ
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//ÆÕÍ¨ÊäÈëÄ£Ê½
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1; //PG1å¯¹åº”IOé…ç½®
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//æ™®é€šè¾“å…¥æ¨¡å¼
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
-  GPIO_Init(GPIOG, &GPIO_InitStructure);//³õÊ¼»¯GPIOG1
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ä¸Šæ‹‰
+  GPIO_Init(GPIOG, &GPIO_InitStructure);//åˆå§‹åŒ–GPIOG1
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; //PC2¶ÔÓ¦IOÅäÖÃ
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//ÆÕÍ¨ÊäÈëÄ£Ê½
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; //PC2å¯¹åº”IOé…ç½®
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//æ™®é€šè¾“å…¥æ¨¡å¼
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
-  GPIO_Init(GPIOC, &GPIO_InitStructure);//³õÊ¼»¯GPIOC2
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ä¸Šæ‹‰
+  GPIO_Init(GPIOC, &GPIO_InitStructure);//åˆå§‹åŒ–GPIOC2
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3; //PA3¶ÔÓ¦IOÅäÖÃ
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//ÆÕÍ¨ÊäÈëÄ£Ê½
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3; //PA3å¯¹åº”IOé…ç½®
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;//æ™®é€šè¾“å…¥æ¨¡å¼
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ÉÏÀ­
-  GPIO_Init(GPIOA, &GPIO_InitStructure);//³õÊ¼»¯GPIOA3
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//ä¸Šæ‹‰
+  GPIO_Init(GPIOA, &GPIO_InitStructure);//åˆå§‹åŒ–GPIOA3
 	
  
  
  
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOB, EXTI_PinSource0);//PB0 Á¬½Óµ½ÖĞ¶ÏÏß0
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOG, EXTI_PinSource1);//PG1 Á¬½Óµ½ÖĞ¶ÏÏß1
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource2);//PC2 Á¬½Óµ½ÖĞ¶ÏÏß2
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource3);//PA3 Á¬½Óµ½ÖĞ¶ÏÏß3
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOB, EXTI_PinSource0);//PB0 è¿æ¥åˆ°ä¸­æ–­çº¿0
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOG, EXTI_PinSource1);//PG1 è¿æ¥åˆ°ä¸­æ–­çº¿1
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource2);//PC2 è¿æ¥åˆ°ä¸­æ–­çº¿2
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource3);//PA3 è¿æ¥åˆ°ä¸­æ–­çº¿3
 	
-	//ÅäÖÃÖĞ¶ÏÏß
+	//é…ç½®ä¸­æ–­çº¿
   EXTI_InitStructure.EXTI_Line = EXTI_Line0|EXTI_Line1|EXTI_Line2|EXTI_Line3;//LINE0
 	
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;//ÖĞ¶ÏÊÂ¼ş
-	//³õÊ¼×´Ì¬ÎªµÍµçÆ½£¬µ±¼ì²âµ½ÎïÌåÊ±£¬KEY0Êä³ö¸ßµçÆ½£¬´ËÊ±INT0µ¼Í¨£¬±äÎªµÍµçÆ½£¬¼´´ÓÉÏÉıÑØÌø±äÖÁÏÂ½µÑØÊ±´¥·¢
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;//ä¸­æ–­äº‹ä»¶
+	//åˆå§‹çŠ¶æ€ä¸ºä½ç”µå¹³ï¼Œå½“æ£€æµ‹åˆ°ç‰©ä½“æ—¶ï¼ŒKEY0è¾“å‡ºé«˜ç”µå¹³ï¼Œæ­¤æ—¶INT0å¯¼é€šï¼Œå˜ä¸ºä½ç”µå¹³ï¼Œå³ä»ä¸Šå‡æ²¿è·³å˜è‡³ä¸‹é™æ²¿æ—¶è§¦å‘
   EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; 
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;//Ê¹ÄÜLINE0
-  EXTI_Init(&EXTI_InitStructure);//ÅäÖÃ
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;//ä½¿èƒ½LINE0
+  EXTI_Init(&EXTI_InitStructure);//é…ç½®
 	
 	
  
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;//PB0¶ÔÓ¦µÄÍâ²¿ÖĞ¶Ï0
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//²»Çø·ÖÓÅÏÈ¼¶£¬Ö»ĞèÒªµçÆ½×ª»»Ê±½øÈëÖĞ¶Ï¼´¿É
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;//PB0å¯¹åº”çš„å¤–éƒ¨ä¸­æ–­0
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//ä¸åŒºåˆ†ä¼˜å…ˆçº§ï¼Œåªéœ€è¦ç”µå¹³è½¬æ¢æ—¶è¿›å…¥ä¸­æ–­å³å¯
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//Ê¹ÄÜÍâ²¿ÖĞ¶ÏÍ¨µÀ
-  NVIC_Init(&NVIC_InitStructure);//ÅäÖÃ
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//ä½¿èƒ½å¤–éƒ¨ä¸­æ–­é€šé“
+  NVIC_Init(&NVIC_InitStructure);//é…ç½®
 	
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;//Íâ²¿ÖĞ¶Ï2
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//ÇÀÕ¼ÓÅÏÈ¼¶3
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//×ÓÓÅÏÈ¼¶2
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//Ê¹ÄÜÍâ²¿ÖĞ¶ÏÍ¨µÀ
-  NVIC_Init(&NVIC_InitStructure);//ÅäÖÃ
-	
-	
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;//Íâ²¿ÖĞ¶Ï3
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//ÇÀÕ¼ÓÅÏÈ¼¶2
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//×ÓÓÅÏÈ¼¶2
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//Ê¹ÄÜÍâ²¿ÖĞ¶ÏÍ¨µÀ
-  NVIC_Init(&NVIC_InitStructure);//ÅäÖÃ
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;//å¤–éƒ¨ä¸­æ–­2
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//æŠ¢å ä¼˜å…ˆçº§3
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//å­ä¼˜å…ˆçº§2
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//ä½¿èƒ½å¤–éƒ¨ä¸­æ–­é€šé“
+  NVIC_Init(&NVIC_InitStructure);//é…ç½®
 	
 	
-	NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;//Íâ²¿ÖĞ¶Ï4
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//ÇÀÕ¼ÓÅÏÈ¼¶1
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//×ÓÓÅÏÈ¼¶2
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//Ê¹ÄÜÍâ²¿ÖĞ¶ÏÍ¨µÀ
-  NVIC_Init(&NVIC_InitStructure);//ÅäÖÃ
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;//å¤–éƒ¨ä¸­æ–­3
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//æŠ¢å ä¼˜å…ˆçº§2
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//å­ä¼˜å…ˆçº§2
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//ä½¿èƒ½å¤–éƒ¨ä¸­æ–­é€šé“
+  NVIC_Init(&NVIC_InitStructure);//é…ç½®
+	
+	
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI3_IRQn;//å¤–éƒ¨ä¸­æ–­4
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x00;//æŠ¢å ä¼˜å…ˆçº§1
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;//å­ä¼˜å…ˆçº§2
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//ä½¿èƒ½å¤–éƒ¨ä¸­æ–­é€šé“
+  NVIC_Init(&NVIC_InitStructure);//é…ç½®
 	   
 }
 
