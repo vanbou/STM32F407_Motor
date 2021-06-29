@@ -3,39 +3,54 @@
 #include "sys.h"
 #include "stdlib.h"	
 
-#define DRIVER_DIR_LR   PGout(4) // Ğı×ª·½Ïò
-#define DRIVER_OE_LR    PGout(3) // Ê¹ÄÜ½Å µÍµçÆ½ÓĞĞ§ 
+#define DRIVER_DIR_LR   PGout(9) // æ—‹è½¬æ–¹å‘
+#define DRIVER_OE_LR    PGout(8) // ä½¿èƒ½è„š ä½ç”µå¹³æœ‰æ•ˆ 
 
-#define DRIVER_DIR_UD   PGout(2) // Ğı×ª·½Ïò
-#define DRIVER_OE_UD    PGout(0) // Ê¹ÄÜ½Å µÍµçÆ½ÓĞĞ§ 
+#define DRIVER_DIR_UD   PGout(7) // æ—‹è½¬æ–¹å‘
+#define DRIVER_OE_UD    PGout(6) // ä½¿èƒ½è„š ä½ç”µå¹³æœ‰æ•ˆ 
 
-#define RCR_VAL    255  //Ã¿¼ÆÊı£¨RCR_VAL+1£©´Î£¬ÖĞ¶ÏÒ»´Î£¬Õâ¸öÖµ£¨0~255£©ÉèÖÃ´óÒ»Ğ©¿ÉÒÔ½µµÍÖĞ¶ÏÆµÂÊ
-#define RCR_VAL1    255  //Ã¿¼ÆÊı£¨RCR_VAL+1£©´Î£¬ÖĞ¶ÏÒ»´Î£¬Õâ¸öÖµ£¨0~255£©ÉèÖÃ´óÒ»Ğ©¿ÉÒÔ½µµÍÖĞ¶ÏÆµÂÊ
+#define RCR_VAL    255  //æ¯è®¡æ•°ï¼ˆRCR_VAL+1ï¼‰æ¬¡ï¼Œä¸­æ–­ä¸€æ¬¡ï¼Œè¿™ä¸ªå€¼ï¼ˆ0~255ï¼‰è®¾ç½®å¤§ä¸€äº›å¯ä»¥é™ä½ä¸­æ–­é¢‘ç‡
+#define RCR_VAL1    255  //æ¯è®¡æ•°ï¼ˆRCR_VAL+1ï¼‰æ¬¡ï¼Œä¸­æ–­ä¸€æ¬¡ï¼Œè¿™ä¸ªå€¼ï¼ˆ0~255ï¼‰è®¾ç½®å¤§ä¸€äº›å¯ä»¥é™ä½ä¸­æ–­é¢‘ç‡
+
+
+#define TAGGLE 1
+#define NORMAL 0
 
 typedef enum
 {
-	CW = 1,//¸ßµçÆ½Ë³Ê±Õë
-	CCW = 0,//µÍµçÆ½ÄæÊ±Õë
-}DIR_Type;//ÔËĞĞ·½Ïò
+	CW = 1,//é«˜ç”µå¹³é¡ºæ—¶é’ˆ
+	CCW = 0,//ä½ç”µå¹³é€†æ—¶é’ˆ
+}DIR_Type;//è¿è¡Œæ–¹å‘
 
-extern long target_pos;//ÓĞ·ûºÅ·½Ïò
-extern long current_pos;//ÓĞ·ûºÅ·½Ïò
+extern long target_pos;//æœ‰ç¬¦å·æ–¹å‘
+extern long current_pos;//æœ‰ç¬¦å·æ–¹å‘
 
-void Driver_InitLR(void);//Çı¶¯Æ÷³õÊ¼»¯
-void Driver_InitUD(void);//Çı¶¯Æ÷³õÊ¼»¯
+void Driver_InitLR(void);//é©±åŠ¨å™¨åˆå§‹åŒ–
+void Driver_InitUD(void);//é©±åŠ¨å™¨åˆå§‹åŒ–
 
 
-void TIM8_OPM_RCR_InitLR(u16 arr,u16 psc);//TIM8_CH2 µ¥Âö³åÊä³ö+ÖØ¸´¼ÆÊı¹¦ÄÜ³õÊ¼»¯
-void TIM8_OPM_RCR_InitUD(u16 arr,u16 psc);//TIM8_CH1 µ¥Âö³åÊä³ö+ÖØ¸´¼ÆÊı¹¦ÄÜ³õÊ¼»¯
+void TIM8_OPM_RCR_InitLR(u16 arr,u16 psc);//TIM8_CH2 å•è„‰å†²è¾“å‡º+é‡å¤è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
+void TIM8_OPM_RCR_InitUD(u16 arr,u16 psc);//TIM8_CH1 å•è„‰å†²è¾“å‡º+é‡å¤è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
 
-void TIM8_StartupLR(u32 frequency);   //Æô¶¯¶¨Ê±Æ÷8
+void TIM8_StartupLR(u32 frequency);   //å¯åŠ¨å®šæ—¶å™¨8
 void TIM8_StartupUD(u32 frequency);
 
-void Locate_RleLR(long num,u32 frequency,DIR_Type dir); //Ïà¶Ô¶¨Î»º¯Êı
-void Locate_AbsLR(long num,u32 frequency);//¾ø¶Ô¶¨Î»º¯Êı
+void Locate_RleLR(long num,u32 frequency,DIR_Type dir); //ç›¸å¯¹å®šä½å‡½æ•°
+void Locate_AbsLR(long num,u32 frequency);//ç»å¯¹å®šä½å‡½æ•°
 
-void Locate_RleUD(long num,u32 frequency,DIR_Type dir); //Ïà¶Ô¶¨Î»º¯Êı
-void Locate_AbsUD(long num,u32 frequency);//¾ø¶Ô¶¨Î»º¯Êı
+void Locate_RleUD(long num,u32 frequency,DIR_Type dir); //ç›¸å¯¹å®šä½å‡½æ•°
+void Locate_AbsUD(long num,u32 frequency);//ç»å¯¹å®šä½å‡½æ•°
+
+
+u8 Check_Sensor0_State(void);//æ°´å¹³æ–¹å‘å·¦æé™ä¼ æ„Ÿå™¨
+u8 Check_Sensor1_State(void);//æ°´å¹³æ–¹å‘å³æé™ä¼ æ„Ÿå™¨
+u8 Check_Sensor2_State(void);//ç«–ç›´æ–¹å‘ä¸‹æé™ä¼ æ„Ÿå™¨
+u8 Check_Sensor3_State(void);//ç«–ç›´æ–¹å‘ä¸Šæé™ä¼ æ„Ÿå™¨
+
+void turnUp(void);
+void turnDown(void);
+void turnLeft(void);
+void turnRight(void);
 
 #endif
 
