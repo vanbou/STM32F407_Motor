@@ -1,6 +1,6 @@
 #include "driver.h"
 #include "delay.h"
-#include "usart.h"
+#include "usart1.h"
 
 
 u8 rcr_remainder;   //重复计数余数部分
@@ -10,6 +10,7 @@ long target_pos=0;  //有符号方向
 long current_pos=0; //有符号方向
 DIR_Type motor_dir=CCW;//顺时针
 
+
 /************** 驱动器控制信号线初始化 ****************/
 void Driver_InitLR(void)
 {
@@ -17,15 +18,15 @@ void Driver_InitLR(void)
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);//使能GPIOG时钟
  
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_4; //DRIVER_DIR DRIVER_OE对应引脚
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9; //DRIVER_DIR DRIVER_OE对应引脚
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//普通输出模式
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
 	GPIO_Init(GPIOG, &GPIO_InitStructure);//初始化GPIOG3,4
 	
-	GPIO_ResetBits(GPIOG,GPIO_Pin_3);//PG3输出低 使能输出  DRIVER_ENA
-	GPIO_SetBits(GPIOG,GPIO_Pin_4);//PG4输出高 顺时针方向  DRIVER_DIR
+	GPIO_ResetBits(GPIOG,GPIO_Pin_8);//PG3输出低 使能输出  DRIVER_ENA
+	GPIO_SetBits(GPIOG,GPIO_Pin_9);//PG4输出高 顺时针方向  DRIVER_DIR
 	
 }
 
@@ -36,15 +37,15 @@ void Driver_InitUD(void)
 
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);//使能GPIOG时钟
  
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_2; //DRIVER_DIR DRIVER_OE对应引脚
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7; //DRIVER_DIR DRIVER_OE对应引脚
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;//普通输出模式
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//100M
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//上拉
 	GPIO_Init(GPIOG, &GPIO_InitStructure);//初始化GPIOG3,4
 	
-	GPIO_ResetBits(GPIOG,GPIO_Pin_0);//PG3输出低 使能输出  DRIVER_ENA
-	GPIO_SetBits(GPIOG,GPIO_Pin_2);//PG4输出高 顺时针方向  DRIVER_DIR
+	GPIO_ResetBits(GPIOG,GPIO_Pin_6);//PG3输出低 使能输出  DRIVER_ENA
+	GPIO_SetBits(GPIOG,GPIO_Pin_7);//PG4输出高 顺时针方向  DRIVER_DIR
 	
 }
 
@@ -154,7 +155,7 @@ void TIM8_OPM_RCR_InitUD(u16 arr,u16 psc)
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级1级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;  //从优先级1级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+ 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 	
 	TIM_ClearITPendingBit(TIM8, TIM_IT_Update);  //清除TIMx的中断待处理位:TIM 中断源
 	TIM_Cmd(TIM8, ENABLE);  //使能TIM8											  
@@ -192,7 +193,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 out:		is_rcr_finish=1;//重复计数器设置完成
 			TIM_CtrlPWMOutputs(TIM8,DISABLE);	//MOE 主输出关闭
 			TIM_Cmd(TIM8, DISABLE);  //关闭TIM8				V
-			printf("当前位置=%ld\r\n",current_pos);//打印输出
+			//printf("当前位置=%ld\r\n",current_pos);//打印输出
 		}	
 	}
 }
@@ -220,6 +221,9 @@ void TIM8_StartupUD(u32 frequency)   //启动定时器8
 //num 0～2147483647
 //frequency: 20Hz~100KHz
 //dir: CW(顺时针方向)  CCW(逆时针方向)
+num pwm波
+频率是快慢
+1000个PWM波是16°23′50″，对应0.28623399弧度
 *********************************************/
 void Locate_RleLR(long num,u32 frequency,DIR_Type dir) //相对定位函数
 {
@@ -230,17 +234,17 @@ void Locate_RleLR(long num,u32 frequency,DIR_Type dir) //相对定位函数
 	
 	if(num<=0) //数值小等于0 则直接返回
 	{
-		printf("\r\nThe num should be greater than zero!!\r\n");
+		//printf("\r\nThe num should be greater than zero!!\r\n");
 		return;
 	}
 //	if(TIM8->CR1&0x01)//上一次脉冲还未发送完成  直接返回
 //	{
-//		printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
+//		//printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
 //		return;
 //	}
 	if((frequency<20)||(frequency>100000))//脉冲频率不在范围内 直接返回
 	{
-		printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
+		//printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
 		return;
 	}
 	motor_dir=dir;//得到方向	
@@ -265,12 +269,12 @@ void Locate_AbsLR(long num,u32 frequency)//绝对定位函数
 {
 	if(TIM8->CR1&0x01)//上一次脉冲还未发送完成 直接返回
 	{
-		printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
+		//printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
 		return;
 	}
 	if((frequency<20)||(frequency>100000))//脉冲频率不在范围内 直接返回
 	{
-		printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
+		//printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
 		return;
 	}
 	target_pos=num;//设置目标位置
@@ -300,17 +304,17 @@ void Locate_RleUD(long num,u32 frequency,DIR_Type dir) //相对定位函数
 	
 	if(num<=0) //数值小等于0 则直接返回
 	{
-		printf("\r\nThe num should be greater than zero!!\r\n");
+		//printf("\r\nThe num should be greater than zero!!\r\n");
 		return;
 	}
 //	if(TIM8->CR1&0x01)//上一次脉冲还未发送完成  直接返回
 //	{
-//		printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
+//		//printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
 //		return;
 //	}
 	if((frequency<20)||(frequency>100000))//脉冲频率不在范围内 直接返回
 	{
-		printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
+		//printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
 		return;
 	}
 	motor_dir=dir;//得到方向	
@@ -335,12 +339,12 @@ void Locate_AbsUD(long num,u32 frequency)//绝对定位函数
 {
 	if(TIM8->CR1&0x01)//上一次脉冲还未发送完成 直接返回
 	{
-		printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
+		//printf("\r\nThe last time pulses is not send finished,wait please!\r\n");
 		return;
 	}
 	if((frequency<20)||(frequency>100000))//脉冲频率不在范围内 直接返回
 	{
-		printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
+		//printf("\r\nThe frequency is out of range! please reset it!!(range:20Hz~100KHz)\r\n");
 		return;
 	}
 	target_pos=num;//设置目标位置
@@ -357,5 +361,168 @@ void Locate_AbsUD(long num,u32 frequency)//绝对定位函数
 		is_rcr_finish=0;//重复计数器设置完成
 		TIM8_StartupUD(frequency);//开启TIM8
 	}
+}
+
+
+//传感器状态监测,逆时针
+u8 Check_Sensor0_State(void)
+{
+	 
+    //Sensor1触发情况
+    if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) == SET) 
+    {
+			//printf("\n----------Sensor 1 No Trigger---------\n");
+      return NORMAL;
+    }
+    //触发
+    else
+    {
+			//printf("\n----------Sensor 1 has Trigger---------\n");
+      return TAGGLE;    
+    }  
+		//delay_ms(10);
+}
+
+
+	//顺时针
+u8 Check_Sensor1_State(void)
+{
+		//Sensor2触发情况
+    if(GPIO_ReadInputDataBit(GPIOF, GPIO_Pin_11) == SET) 
+    {
+			//printf("\n----------Sensor 2 No Trigger---------\n");
+      return NORMAL;
+    }
+    //触发
+    else
+    {
+			//printf("\n----------Sensor 2 has Trigger---------\n");
+      return TAGGLE;    
+    }  
+		//delay_ms(10);
+	}
+
+	
+	//下方
+	u8 Check_Sensor2_State(void)
+{
+		
+				//Sensor3触发情况
+    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_2) == SET) 
+    {
+			//printf("\n----------Sensor 3 No Trigger---------\n");
+      return NORMAL;
+    }
+    //触发
+    else
+    {
+			//printf("\n----------Sensor 3 has Trigger---------\n");
+      return TAGGLE;    
+    } 
+		//delay_ms(10);
+		
+	}
+
+	
+//上方
+	u8 Check_Sensor3_State(void)
+{
+		
+				//Sensor4触发情况
+    if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3) == SET) 
+    {
+			//printf("\n----------4No---------\n");
+      return NORMAL;
+    }
+    //触发
+    else
+    {
+			//printf("\n----------Sensor 4 has Trigger---------\n");
+      return TAGGLE;    
+    } 
+		
+		//delay_ms(10);
+ }
+
+ 
+
+void turnLeft()
+{
+		/*负责控制右方传感器（逆时针）信号检测，检测到金属停止下降
+						测试成功
+				*/
+	while(1){		
+		if(Check_Sensor0_State()==NORMAL){			
+                Locate_RleLR(50,500,CW);
+				delay_ms(10);
+			}
+			else{			
+				return;
+			}
+	}
+}
+
+
+
+void turnRight()
+{
+		/*负责控制右方传感器（逆时针）信号检测，检测到金属停止下降
+						测试成功
+				*/
+	while(1){		
+		if(Check_Sensor1_State()==NORMAL){
+            Locate_RleLR(50,500,CCW);
+            delay_ms(10);
+		}
+		else{
+			return;
+		}
+	}
+}
+
+
+void turnUp()
+{
+		/*负责控制上方传感器（逆时针）信号检测，检测到金属停止下降
+						测试成功
+				*/
+		while(1)
+		{
+	  if(Check_Sensor3_State()==NORMAL)
+			{
+			Locate_RleUD(3000,10000,CCW);
+				delay_ms(100);
+			}
+			else
+			{
+				return;
+			}
+		}
+		
+
+}
+
+
+
+
+void turnDown()
+{
+		/*负责控制下方传感器（逆时针）信号检测，检测到金属停止下降
+						测试成功
+				*/
+			while(1)
+		{
+	  if(Check_Sensor2_State()==NORMAL)
+			{
+			Locate_RleUD(3000,15000,CW);
+				delay_ms(100);
+			}
+			else
+			{
+				return;
+			}
+		}
+		
+
 }
 
