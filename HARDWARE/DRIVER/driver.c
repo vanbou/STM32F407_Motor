@@ -1,6 +1,6 @@
 #include "driver.h"
 #include "delay.h"
-#include "usart1.h"
+#include "usart.h"
 
 
 u8 rcr_remainder;   //重复计数余数部分
